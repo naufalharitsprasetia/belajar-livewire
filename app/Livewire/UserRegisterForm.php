@@ -7,13 +7,10 @@ use Livewire\Component;
 use Livewire\WithFileUploads;
 use Livewire\Attributes\Validate;
 use Illuminate\Support\Facades\Hash;
-use Livewire\WithPagination;
 
-class Users extends Component
+class UserRegisterForm extends Component
 {
-    use WithFileUploads, WithPagination;
-
-    public $query = '';
+    use WithFileUploads;
 
     #[Validate('image|max:3120')] // 1MB Max
     public $avatar;
@@ -29,16 +26,6 @@ class Users extends Component
     #[Validate('required|min:3')]
     public $password = '';
 
-    public function updatedQuery()
-    {
-        $this->resetPage();
-    }
-
-    public function search()
-    {
-        $this->resetPage();
-    }
-
     public function createNewUser()
     {
         $validated = $this->validate();
@@ -53,16 +40,14 @@ class Users extends Component
             'password' => Hash::make($this->password),
             'avatar' => $validated['avatar']
         ]);
+        $this->reset();
 
         session()->flash('success', 'User Baru Telah Ditambahkan!');
-        $this->reset();
+
+        $this->dispatch('user-created');
     }
     public function render()
     {
-        return view('livewire.users', [
-            'users' => User::latest()
-                ->where('name', 'like', "%{$this->query}%")
-                ->paginate(7)
-        ]);
+        return view('livewire.user-register-form');
     }
 }
