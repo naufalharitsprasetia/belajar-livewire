@@ -18,7 +18,7 @@
 <body>
     <div class="flex justify-center gap-10">
         @livewire('user-register-form')
-        @livewire('user-list')
+        @livewire('user-list', ['lazy'=> true])
     </div>
 </body>
 
